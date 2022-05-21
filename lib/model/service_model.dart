@@ -1,16 +1,19 @@
-// import 'dart:convert';
-//
-// class AvailableServices {
-//   String title;
-//
-//   AvailableServices({required this.title});
-//   factory AvailableServices.fromJson(Map<String, dynamic> json){
-//     return AvailableServices(
-//       title: json['title']
-//     );
-//   }
-//   Map<String, dynamic> toJson() => {
-//     'title' : title
-//   };
-// }
-//
+import 'dart:collection';
+
+class Services{
+  int? id;
+  var name;
+  String? icon;
+  String? banner;
+  String? bgcolor;
+
+  Services(this.id, this.name, this.icon, this.banner, this.bgcolor);
+  Services.fromJson(json)
+  {
+    this.id=json['id'];
+    this.name=json['name']['En'];
+    this.icon=json['icon'];
+    this.banner=json['banner'];
+    this.bgcolor=json['bgcolor'];
+  }
+}
