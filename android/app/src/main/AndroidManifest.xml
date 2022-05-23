@@ -1,5 +1,6 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.example.lcn_firm_assignment">
+    <uses-permission android:name="android.permission.INTERNET"/>
    <application
         android:label="lcn_firm_assignment"
         android:name="${applicationName}"

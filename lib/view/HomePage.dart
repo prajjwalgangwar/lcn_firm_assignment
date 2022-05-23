@@ -298,7 +298,9 @@ class HighestRated extends StatelessWidget {
                       decoration: BoxDecoration(
                           color: Colors.red.shade300,
                           borderRadius: BorderRadius.circular(8),
-
+                        image:const DecorationImage(
+                          image: AssetImage('assets/images/makeup.png')
+                        )
                       ),
                       // child: Image.asset('assets/images/1.png'),
                     ),

@@ -1,5 +1,11 @@
+import 'dart:io';
+
 import 'package:dotted_border/dotted_border.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:get/get.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:lcn_firm_assignment/controller/serviceAPI.dart';
 import 'package:lcn_firm_assignment/utilities/colors.dart';
 import 'package:lcn_firm_assignment/view/AvailableServices.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
@@ -8,6 +14,7 @@ import 'package:lcn_firm_assignment/controller/validators.dart';
 import 'package:email_validator/email_validator.dart';
 import 'package:http/http.dart' as http;
 import 'dart:core';
+import 'package:intl/intl.dart';
 
 class DetailForm extends StatefulWidget{
   @override
@@ -22,9 +29,14 @@ class DetailFormState extends State<DetailForm> with InputValidationMixin {
         context: context,
         initialDate: currentDate,
         firstDate: DateTime(1905),
-        lastDate: DateTime(2022));
+        lastDate: DateTime(2050));
     if (pickedDate != null && pickedDate != currentDate)
       setState(() {
+        dob='';
+        dob+=(currentDate.day<=9 ? '0'+currentDate.day.toString(): currentDate.day.toString())+'/';
+        dob+=(currentDate.month<=9 ? '0'+currentDate.month.toString(): currentDate.month.toString())+'/';
+        dob+=currentDate.year.toString();
+        print('dob ata temp is $dob');
         currentDate = pickedDate;
       });
   }
@@ -41,7 +53,8 @@ class DetailFormState extends State<DetailForm> with InputValidationMixin {
   String? password;
   String? confirmPassword;
   String? gender;
-  String dob = '';
+  String dob='';
+  PickedFile? image;
 
   postFormData() async{
     var response = http.post(Uri.parse('uri'), body: {
@@ -57,11 +70,16 @@ class DetailFormState extends State<DetailForm> with InputValidationMixin {
   final _formKey = GlobalKey<FormState>();
   bool _isValid = false;
 
+  bool formStatus(){
+
+    return false;
+  }
   void _saveForm() {
     setState(() {
       _isValid = _formKey.currentState!.validate();
     });
   }
+
 
   bool _value = false;
   var val = -1;
@@ -75,36 +93,56 @@ class DetailFormState extends State<DetailForm> with InputValidationMixin {
         key: _formKey,
         child: Column(
           children: [
-            DottedBorder(
-                dashPattern: [3, 4],
-                strokeWidth: 0.5,
-                child: Container(
-                    alignment: Alignment.center,
-                    height: 100,
-                    width: 100,
-                    margin: EdgeInsets.all(10),
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(5),
-                    ),
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: [
-                        Icon(
-                          Icons.camera_enhance_rounded,
-                          size: 32,
-                          color: Color(0xFF939393),
-                          semanticLabel: 'Upload',
-                        ),
-                        Padding(
-                          padding: EdgeInsets.all(5),
-                          child: Text(
-                            'Upload',
-                            style: TextStyle(color: Color(0xFF939393), fontSize: 12),
+            InkWell(
+              onTap: ()async{
+                await ImagePicker.platform.pickImage(source: ImageSource.gallery).then((value) => image=value);
+                setState(() {
+
+                });
+              },
+              child: image == null ? DottedBorder(
+                  dashPattern: [3, 4],
+                  strokeWidth: 0.5,
+                  child: Container(
+                      alignment: Alignment.center,
+                      height: 100,
+                      width: 100,
+                      margin: EdgeInsets.all(10),
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(5),
+                      ),
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          Icon(
+                            Icons.camera_enhance_rounded,
+                            size: 32,
+                            color: Color(0xFF939393),
+                            semanticLabel: 'Upload',
                           ),
-                        )
-                      ],
-                    ))),
+                          Padding(
+                            padding: EdgeInsets.all(5),
+                            child: Text(
+                              'Upload',
+                              style: TextStyle(color: Color(0xFF939393), fontSize: 12),
+                            ),
+                          )
+                        ],
+                      ))) : Container(
+                alignment: Alignment.center,
+                height: 100,
+                width: 100,
+                margin: EdgeInsets.all(10),
+                child: Image.file(File(image!.path)),
+                // decoration: BoxDecoration(
+                //     borderRadius: BorderRadius.circular(5),
+                //     image: DecorationImage(
+                //         image: ima,
+                //     )
+                // ),
+              )
+            ),
             Container(
               margin: EdgeInsets.symmetric(vertical: 12, horizontal: 16),
               child: TextFormField(
@@ -147,6 +185,9 @@ class DetailFormState extends State<DetailForm> with InputValidationMixin {
             Container(
               margin: EdgeInsets.symmetric(vertical: 12, horizontal: 16),
               child: TextFormField(
+                // inputFormatters : [
+                //   FilteringTextInputFormatter.allow(RegExp(r'[a-z]')),
+                // ],
                 controller: emailController,
                 style: TextStyle(
                   fontSize: 14,
@@ -157,7 +198,7 @@ class DetailFormState extends State<DetailForm> with InputValidationMixin {
                   email = value;
                 },
                 validator: (value) {
-                  //todo email validation
+                        isEmailValid(value) == true ? 'Enter Valid Email' : null;
                 },
                 decoration: InputDecoration(
                   focusColor: Colors.white,
@@ -179,6 +220,8 @@ class DetailFormState extends State<DetailForm> with InputValidationMixin {
                     fontFamily: "verdana_regular",
                     fontWeight: FontWeight.w400,
                   ),
+
+
                 ),
               ),
             ),
@@ -320,7 +363,6 @@ class DetailFormState extends State<DetailForm> with InputValidationMixin {
                       fontWeight: FontWeight.normal,
                     ),
                     onChanged: (value) {
-                      dob = value;
                     },
                     validator: (value){
                     },
@@ -348,7 +390,7 @@ class DetailFormState extends State<DetailForm> with InputValidationMixin {
                         borderRadius: BorderRadius.circular(10.0),
                       ),
                       fillColor: Colors.grey,
-                      hintText: "Date of Birth",
+                      hintText: dob.length <= 0 ?"Date of Birth":dob,
                       hintStyle: TextStyle(
                         color: Color(0xFF939393),
                         fontSize: 14,
@@ -408,9 +450,16 @@ class DetailFormState extends State<DetailForm> with InputValidationMixin {
                     shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(8),
                         side: BorderSide(color: Colors.transparent))),
-                onPressed: () {
+                onPressed: () async {
+
                   _saveForm();
-                  print('data of form: $name $email $password $confirmPassword $user_status ${currentDate.day}/${currentDate.month}/${currentDate.year}');
+                  var statusCode = await HttpService().submitUserDetails(image, name, email, password, gender, dob, user_status);
+
+                  // emailController.clear();
+
+                  print('status code = ${statusCode.runtimeType}');
+                  statusCode == 200 ? ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Saved'))) : ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Nahi Karunga Save')));
+                  // print('data of form: $name $email $password $confirmPassword $user_status ${currentDate.day}/${currentDate.month}/${currentDate.year}');
                 },
                 child: Text(
                   'Submit',

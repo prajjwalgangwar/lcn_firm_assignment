@@ -1,6 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:lcn_firm_assignment/controller/serviceAPI.dart';
 import 'package:lcn_firm_assignment/utilities/colors.dart';
+
+import '../model/service_model.dart';
 class Services extends StatefulWidget {
+  const Services({Key? key}) : super(key: key);
+
   @override
   ServicesState createState() => ServicesState();
 }
@@ -36,15 +41,17 @@ class ServicesState extends State<Services> {
             height: 92,
             margin: EdgeInsets.only(top: 16, left: 16),
             child: ListView.builder(
-              itemCount: 4,
+              itemCount: servicesList.length,
             scrollDirection: Axis.horizontal,
-            itemBuilder: (context, index) {
+            itemBuilder: (context, index){
+              ServicesModel service=servicesList.elementAt(index) as ServicesModel;
+              print('services length ${service.name}');
               return Container(
                 width: 92,
                 height: 92,
                 margin: const EdgeInsets.only(right: 12),
                 decoration: BoxDecoration(
-                    color: Color(0xFFFAA33F),
+                    color: Color(int.parse(service.bgcolor!)),
                     borderRadius: BorderRadius.circular(8)),
                 child: Column(
                   children: [
@@ -53,13 +60,12 @@ class ServicesState extends State<Services> {
                       width: 50,
                       margin: const EdgeInsets.only(bottom: 13.25, top: 11, left: 21, right: 21),
                       decoration: BoxDecoration(
-                        color: Colors.green.shade50,
                           borderRadius: BorderRadius.circular(8),
-                          // image: const DecorationImage(
-                          //     image: NetworkImage('assets/makeup@2x.png'))
+                          image: DecorationImage(
+                              image: NetworkImage(service.icon!))
                             ),
                     ),
-                    Text('Women Beautician', style: TextStyle(fontSize: 9, color: Colors.white),)
+                    Text(service.name, style: TextStyle(fontSize: 9, color: Colors.white),)
                   ],
                 ),
               );
