@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:lcn_firm_assignment/view/HomePage.dart';
 import 'package:http/http.dart' as http;
 import 'package:lcn_firm_assignment/controller/serviceAPI.dart';
-import 'package:lcn_firm_assignment/controller/controllers.dart';
 
 
 void main() async {
