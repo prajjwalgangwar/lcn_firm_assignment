@@ -39,7 +39,7 @@ class ServicesState extends State<Services> {
         ),
         Container(
             height: 92,
-            margin: EdgeInsets.only(top: 16, left: 16),
+            margin: const EdgeInsets.only(top: 16, left: 16),
             child: ListView.builder(
               itemCount: servicesList.length,
             scrollDirection: Axis.horizontal,

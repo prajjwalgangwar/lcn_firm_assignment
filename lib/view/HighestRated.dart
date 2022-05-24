@@ -1,4 +1,5 @@
 
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:download_assets/download_assets.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -11,20 +12,14 @@ class HisgestRated extends StatefulWidget{
   HighestRatedState createState() => HighestRatedState();
 }
 class HighestRatedState extends State<HisgestRated> {
-  DownloadAssetsController downloadAssetsController = DownloadAssetsController();
-  String message = 'Press button to download';
-  bool downloaded = false;
 
+  String salon1_image = 'https://static.wixstatic.com/media/8dd88e_6fcdbb0a87e4450ba9a0dfe65bab2577~mv2.png/v1/fill/w_372,h_210,al_c,q_85,usm_0.66_1.00_0.01/makeup.png';
+  String salon2_image = 'https://static.wixstatic.com/media/8dd88e_f5772fb31b66490d83012666f8273809~mv2.png/v1/fill/w_392,h_222,al_c,lg_1,q_85/Salon2.png';
   @override
   void initState() {
     super.initState();
-    _init();
   }
 
-  _init() async{
-    await downloadAssetsController.init();
-    downloaded = await downloadAssetsController.assetsDirAlreadyExists();
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -48,7 +43,7 @@ class HighestRatedState extends State<HisgestRated> {
         ),
         Container(
           height: 190,
-          margin: EdgeInsets.only(top: 16, bottom: 32),
+          margin: const EdgeInsets.only(top: 16, bottom: 32),
           child: ListView.builder(
             scrollDirection: Axis.horizontal,
             itemCount: 2,
@@ -59,7 +54,7 @@ class HighestRatedState extends State<HisgestRated> {
                 decoration: BoxDecoration(
                     color: Colors.white,
                     border: Border.all(
-                        color: Color(0xFF939393),
+                        color: const Color(0xFF939393),
                         width: 0.5
                     ),
                     borderRadius: BorderRadius.circular(8)),
@@ -75,9 +70,12 @@ class HighestRatedState extends State<HisgestRated> {
                         decoration: BoxDecoration(
                           color: Colors.red.shade300,
                           borderRadius: BorderRadius.circular(8),
-
+                          image: DecorationImage(
+                            image: CachedNetworkImageProvider(
+                                index == 0 ? salon1_image : salon2_image
+                            )
+                          )
                         ),
-                        child: Image.asset('assets/makeup.png'),
                       ),
                     ),
                     const Align(
